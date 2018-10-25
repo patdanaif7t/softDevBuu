@@ -25,7 +25,6 @@ public class FormLogin extends javax.swing.JFrame {
         btnCancel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(750, 550));
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -70,6 +69,11 @@ public class FormLogin extends javax.swing.JFrame {
         jPanel1.add(btnSignIn, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 370, -1, -1));
 
         btnCancel.setText("Cancel");
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelActionPerformed(evt);
+            }
+        });
         jPanel1.add(btnCancel, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 370, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -108,6 +112,11 @@ public class FormLogin extends javax.swing.JFrame {
             
         }
     }//GEN-LAST:event_btnSignInActionPerformed
+
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+        // TODO add your handling code here:
+       dispose();
+    }//GEN-LAST:event_btnCancelActionPerformed
 
     public void clearText() {
         txtUsername.setText("");
