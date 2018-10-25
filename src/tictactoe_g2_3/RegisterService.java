@@ -5,13 +5,12 @@
  */
 package tictactoe_g2_3;
 
-import com.mongodb.*;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import static com.mongodb.client.model.Filters.eq;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import org.bson.Document;
 import static tictactoe_g2_3.Database.findAll;
 import static tictactoe_g2_3.Database.getCollection;
@@ -23,7 +22,6 @@ import static tictactoe_g2_3.Database.getCollection;
 public class RegisterService {
 
     private static Database db;
-    private static MongoCollection<Document> user;
 
     public RegisterService() {
         db = new Database();
@@ -32,8 +30,7 @@ public class RegisterService {
     public boolean checkUserExist(String User) {//checkUserExist  checkID
         db.setCollection("user");
         try {
-
-            Document myDoc = user.find(eq("ID", User)).first();
+            Document myDoc = db.find("Username", User);
             System.out.println(myDoc.toJson());
             return true;
 
@@ -58,11 +55,26 @@ public class RegisterService {
 
     public boolean isFill(String field) {
         if (field.equals("")) {
-            return true;
-        } else {
             return false;
+        } else {
+            return true;
         }
 
+    }
+    public void alertMessageIcon(String message) {
+        ImageIcon icon = new ImageIcon(FormLogin.class.getResource("/image/correct.png"));
+        JLabel text = new JLabel(message);
+        text.setFont(new Font("TH Sarabun New", Font.BOLD, 25));
+        JOptionPane.showMessageDialog(
+                null,
+                text, "เข้าสู่ระบบ", JOptionPane.INFORMATION_MESSAGE,
+                icon);
+    }
+    
+    public void alertMessage(String message) {
+        JLabel label = new JLabel(message);
+        label.setFont(new Font("TH Sarabun New", Font.BOLD, 18));
+        JOptionPane.showMessageDialog(null, label, "ERROR", JOptionPane.WARNING_MESSAGE);
     }
 
     public boolean isFieldAllFilled(String username,
@@ -70,9 +82,9 @@ public class RegisterService {
             String password,
             String confirmPassword) {
         if (isFill(username)
-                || isFill(playerName)
-                || isFill(password)
-                || isFill(confirmPassword)) {
+                && isFill(playerName)
+                && isFill(password)
+                && isFill(confirmPassword)) {
             return true;
         } else {
             return false;
@@ -86,5 +98,7 @@ public class RegisterService {
             return false;
         }
     }
-
+    
+  
+    
 }

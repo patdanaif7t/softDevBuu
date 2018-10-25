@@ -15,13 +15,15 @@ public class UserDao {
 
     private static Database db;
     private static String avatarId;
+    private static User user;
 
     public UserDao() {
         db = new Database();
+        db.setCollection("user");
     }
 
     public boolean addUser(String Username, String Password, String Playname, String AvatarId) {
-        
+
         db.setCollection("user");
         User user = new User(Username, Password, Playname, AvatarId);
         Document userData = new Document();
@@ -29,14 +31,14 @@ public class UserDao {
         userData.append("Password", user.getPassword());
         userData.append("Playname", user.getPlayname());
         userData.append("AvatarId", user.getAvatar());
-        
+
         try {
             db.insert(userData);
             return true;
         } catch (Exception e) {
             return false;
         }
-        
+
     }
 
     public boolean getAllUser(Document doc) {
@@ -50,17 +52,14 @@ public class UserDao {
         }
     }
 
-    public boolean getUser(String username) {
-        try {
-            Document user = db.find("Username", username);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-    
-    public boolean isUserExist() {
-        return true;
+    public User getUser(String username) {
+        Document userQuery = db.find("Username", username);
+        user = new User();
+        user.setUsername(userQuery.get("Username").toString());
+        user.setPassword(userQuery.get("Password").toString());
+        user.setPlayname(userQuery.get("Playname").toString());
+        user.setAvatar(userQuery.get("AvatarId").toString());
+        return user;
     }
 
     public boolean editUser(Document doc) {
@@ -73,5 +72,6 @@ public class UserDao {
             return false;
         }
     }
+    
 
 }

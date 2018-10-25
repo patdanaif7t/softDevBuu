@@ -18,145 +18,73 @@ import org.bson.Document;
  * @author firstx
  */
 public class FormRegister extends javax.swing.JFrame {
-    
+
     String avatarId;
     Database db;
     UserDao userdao;
-    RegisterService registerservice;
+    RegisterService service;
     User user;
-    
+
     public FormRegister() {
         initComponents();
-        avatarId = "Default.png";
+        avatarId = "Avatar1.png";
         userdao = new UserDao();
-        registerservice = new RegisterService();
+        service = new RegisterService();
     }
-    
+
     public void submitRegister() {
-        
+
         userdao.addUser(txtUsername.getText(), txtPassword.getText(), txtPlayerName.getText(), avatarId);
-        
+
         masregisterSuccess();
         gotoLogin();
     }
-    
+
     public void masregisterSuccess() {
-        JLabel label = new JLabel("สมัครสมาชิกสำเร็จ!");
-        label.setFont(new Font("TH Sarabun New", Font.BOLD, 18));
-        JOptionPane.showMessageDialog(this, label);
-        
+        service.alertMessageIcon("สมัครสมาชิกสำเร็จ!");
     }
-
-    /*
-    แสดงข้อความเตือนเมื่อผู้ใช้ กรองข้อมูลไม่ครบถ้วน
-     */
-    public void masIsNotFillAllFiled() {
-        JLabel label = new JLabel("“กรุณากรอกข้อมูลให้ครบถ้วน");
-        label.setFont(new Font("TH Sarabun New", Font.BOLD, 18));
-        JOptionPane.showMessageDialog(null, label, "ERROR", JOptionPane.WARNING_MESSAGE);
-    }
-
-    /*
-    แสดงข้อความเตือนเมื่อ ชื่อผู้ใช้ ที่ผู้ใช้กรอกมา ซ้ำกับ ชื่อผู้ใช้ในระบบ
-     */
-    public void masUserExist() {
-        JLabel label = new JLabel("ชื่อผู้ใช้นี้มีอยู่แล้วในระบบ");
-        label.setFont(new Font("TH Sarabun New", Font.BOLD, 18));
-        JOptionPane.showMessageDialog(null, label, "ERROR", JOptionPane.WARNING_MESSAGE);
-    }
-
-    /*
-    แสดงข้อความเตือนเมื่อผู้ใช้ยืนยันรหัสผ่านไม่ถูกต้อง
-     */
-    public void masPassDoNotMatch() {
-        JLabel label = new JLabel("รหัสผ่านไม่ตรงกัน");
-        label.setFont(new Font("TH Sarabun New", Font.BOLD, 18));
-        JOptionPane.showMessageDialog(null, label, "ERROR", JOptionPane.WARNING_MESSAGE);
-    }
-
-    /*
-    แสดงข้อความเตือนเมื่อผู้ใช้ กรอก ชื่อผู้ใช้ หรือ รหัสผ่าน ไม่ตรงกับเงื่อนไข
-     */
-    public void masUserPassLessThan8() {
-        JLabel label = new JLabel("รหัสผ่านต้องมีความยาวมากกว่า หรือเท่ากับ 8 ตัวอักษร");
-        label.setFont(new Font("TH Sarabun New", Font.BOLD, 18));
-        JOptionPane.showMessageDialog(null, label, "ERROR", JOptionPane.WARNING_MESSAGE);
-    }
-    
-    public void masUsernameLessThan8() {
-        JLabel label = new JLabel("ชื่อผู้ใช้งานต้องมีความยาวมากกว่า หรือเท่ากับ 8 ตัวอักษร และไม่ซ้ำกันกับในระบบ");
-        label.setFont(new Font("TH Sarabun New", Font.BOLD, 18));
-        JOptionPane.showMessageDialog(null, label, "ERROR", JOptionPane.WARNING_MESSAGE);
-    }
-
-    /*
-
-    
+ 
      /*
     ตรวจสอบว่าผู้ใช้ยืนยันรหัสผ่านถูกต้องหรือไม่
     โดยข้อมูลเข้าเป็น String
     และข้อมูลออกเป็น Boolean
      */
-    public boolean isPasswordMatching(String txtPass, String txtRePass) {//isPasswordMatching  checkrepass
-        if (txtPass.equals(txtRePass)) {
-//            System.out.println("ซ้ำ");
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /*
-     ตรวจสอบว่า ผู้ใช้กรอก ชื่อผู้ใช้ และ รหัสผ่าน ตรงตามเงื่อนไขของระบบหรือไม่
-     True = ตรงตามเงื่อนไข
-     Flase = ไม่ตรงตามเงื่อนไข
-     */
-    public boolean checkLengthIdPass(String txtUsername, String txtPassword) {
-        if (txtPassword.length() >= 8) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-   public boolean checkLengthIdUsername(String txtUsername, String txtPassword) {
-        if (txtUsername.length() >= 8) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
     public void pushRegister() {
-        
-        if (!isFillAllFiled(txtUsername.getText(), txtPlayerName.getText(), txtPassword.getText(), txtConfirmPassword.getText())) {
-            masIsNotFillAllFiled();
-            clearInpurField();
-            
-        } else {
-            if (checkLengthIdPass(txtUsername.getText(), txtPassword.getText())) {
-                
-                if (isPasswordMatching(txtPassword.getText(), txtConfirmPassword.getText())) { // รหัสผ่านตรงกัน
 
-                    if (registerservice.checkUserExist(txtUsername.getText())) {
-                        masUserExist();
-                        clearInpurField();
+        if (!service.isFieldAllFilled(txtUsername.getText(),
+                txtPlayerName.getText(),
+                txtPassword.getText(),
+                txtConfirmPassword.getText())) {
+
+            service.alertMessage("กรุณากรอกข้อมูลให้ครบถ้วน");
+            clearInpurField();
+
+        } else {
+
+            if (service.isLengthCorrect(txtUsername.getText())) {
+                if (service.isLengthCorrect(txtPassword.getText())) {
+                    if (service.isPasswordMatching(txtPassword.getText(),
+                            txtConfirmPassword.getText())) { // รหัสผ่านตรงกัน
+                        if (service.checkUserExist(txtUsername.getText())) {
+                            service.alertMessage("ชื่อผู้ใช้นี้มีอยู่แล้วในระบบ");
+                            clearInpurField();
+                        } else {
+                            submitRegister();
+                            clearInpurField();
+                        }
                     } else {
-                        
-                        submitRegister();
+                        service.alertMessage("รหัสผ่านไม่ตรงกัน");
                         clearInpurField();
-                        
                     }
                 } else {
-                    masPassDoNotMatch();
+                    service.alertMessage("รหัสผ่านจะต้องมีความยาวมากกว่า หรือเท่ากับ 8 ตัวอักษร");
                     clearInpurField();
                 }
-                
             } else {
-                masUserPassLessThan8();
+                service.alertMessage("ชื่อผู้ใช้งานต้องมีความยาวมากกว่า หรือเท่ากับ 8 ตัวอักษร และไม่ซ้ำกันกับในระบบ");
                 clearInpurField();
             }
-            
+
         }
     }
 
@@ -166,22 +94,7 @@ public class FormRegister extends javax.swing.JFrame {
     public void gotoLogin() {
         dispose();
         new FormLogin().show();
-        
-    }
 
-    /*
-    ตรวจสอบว่า ผู้ใช้กรอกข้อมูลครบถ้วนหรือไม่
-    True = ไม่ครบถ้วน
-    False = ครบถ้วน
-     */
-    public boolean isFillAllFiled(String txtUsername, String txtPlayerName, String txtPassword, String txtConfirmPassword) { //isFillAllFiled  checkEmpty
-
-        if (txtUsername.equals("") || txtPlayerName.equals("") || txtPassword.equals("") || txtConfirmPassword.equals("")) {
-            return false; // Text ว่าง
-        } else {
-            return true; // Text โดนกรอกแล้ว
-        }
-        
     }
 
     /*
@@ -194,7 +107,7 @@ public class FormRegister extends javax.swing.JFrame {
         txtConfirmPassword.setText("");
         //tx_avatar.setText("");
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -215,6 +128,7 @@ public class FormRegister extends javax.swing.JFrame {
         txtPlayerName = new javax.swing.JTextField();
         btnRegister = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -229,7 +143,7 @@ public class FormRegister extends javax.swing.JFrame {
         jLabel6.setText("REGISTER");
         jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 30, -1, -1));
 
-        imgAvatarShow.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/AvatarDefault.png"))); // NOI18N
+        imgAvatarShow.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/Avatar1.png"))); // NOI18N
         jPanel1.add(imgAvatarShow, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 120, 110, 110));
 
         btnAvatar3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/Avatar3.png"))); // NOI18N
@@ -281,9 +195,14 @@ public class FormRegister extends javax.swing.JFrame {
         jPanel1.add(txtUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 130, 240, -1));
 
         txtPlayerName.setFont(new java.awt.Font("TH Sarabun New", 0, 18)); // NOI18N
+        txtPlayerName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPlayerNameActionPerformed(evt);
+            }
+        });
         jPanel1.add(txtPlayerName, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 340, 240, -1));
 
-        btnRegister.setText("Sign in");
+        btnRegister.setText("Register");
         btnRegister.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRegisterActionPerformed(evt);
@@ -292,7 +211,22 @@ public class FormRegister extends javax.swing.JFrame {
         jPanel1.add(btnRegister, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 390, -1, -1));
 
         jButton2.setText("Clear");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 390, -1, -1));
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/back.png"))); // NOI18N
+        jButton1.setToolTipText("");
+        jButton1.setBorder(null);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 70, 40));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -337,9 +271,22 @@ public class FormRegister extends javax.swing.JFrame {
     private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterActionPerformed
         // TODO add your handling code here:
         pushRegister();
-        
+
 
     }//GEN-LAST:event_btnRegisterActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        clearInpurField();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+       gotoLogin();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtPlayerNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPlayerNameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPlayerNameActionPerformed
 
     /**
      * @param args the command line arguments
@@ -382,6 +329,7 @@ public class FormRegister extends javax.swing.JFrame {
     private javax.swing.JButton btnAvatar3;
     private javax.swing.JButton btnRegister;
     private javax.swing.JLabel imgAvatarShow;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

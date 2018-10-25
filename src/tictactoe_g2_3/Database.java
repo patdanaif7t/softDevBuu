@@ -39,19 +39,24 @@ public class Database {
             return false;
         }
     }
-    
+   
     public static Document find(String key,
             String value) {
         return collection.find(eq(key, value)).first();
     }
     
-    public static boolean isExist() {
-        return true;
+    public static Document find(String key,
+            int value) {
+        return collection.find(eq(key, value)).first();
     }
-    
      public static FindIterable<Document> findAll(MongoCollection<Document> col) {
         return collection.find();
     }
+
+//    Document find(String id, int id0) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
     
+
      
 }
